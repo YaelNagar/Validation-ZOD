@@ -10,8 +10,8 @@ const Home = () => {
     date: "",
     email: "",
   });
-  
-  const [errors, setErrors] = useState({
+
+  const [errors, setErrors] = useState<Record<keyof typeof formData, string>>({
     id: "",
     firstName: "",
     lastName: "",
@@ -49,9 +49,16 @@ const Home = () => {
       alert("הנתונים נשלחו בהצלחה");
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const newErrors: any = {};
+        const newErrors: Record<keyof typeof formData, string> = {
+          id: "",
+          firstName: "",
+          lastName: "",
+          date: "",
+          email: "",
+        };
         error.errors.forEach((err) => {
-          if (err.path[0]) newErrors[err.path[0]] = err.message;
+          const field = err.path[0] as keyof typeof formData;
+          newErrors[field] = err.message;
         });
         setErrors(newErrors);
       }
